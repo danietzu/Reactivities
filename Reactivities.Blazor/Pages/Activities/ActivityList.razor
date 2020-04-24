@@ -1,0 +1,59 @@
+﻿@using Data
+@using Store
+@using Store.Activities
+@using Fluxor
+
+@inject ActivitiesService ActivitiesService
+@inject IDispatcher Dispatcher
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="ui clearing segment">
+    <div class="ui divided items">
+        @if (activities == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            @foreach (var activity in activities)
+            {
+                <div class="item">
+                    <div class="content">
+                        <a class="header">@activity.Title</a>
+                        <div class="meta">@activity.Date</div>
+                        <div class="description">
+                            <div>@activity.Description</div>
+                            <div>@activity.City, @activity.Venue</div>
+                        </div>
+                        <div class="extra">
+                            <button class="ui button blue right floated"
+                                    @onclick="() => SelectActivity(activity)">
+                                View
+                            </button>
+                            <label class="ui basic label">@activity.Category</label>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private Activity[] activities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        activities = await ActivitiesService.GetActivities();
+    }
+
+    private void SelectActivity(Activity selectedActivity)
+    {
+        Dispatcher.Dispatch(new SetEditModeAction(false));
+
+        Dispatcher.Dispatch(new SelectActivityAction
+        {
+            SelectedActivity = selectedActivity
+        });
+    }
+}

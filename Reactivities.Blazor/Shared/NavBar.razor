@@ -1,0 +1,34 @@
+﻿@using Fluxor
+@using Store
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<AppState> AppState
+@inject IDispatcher Dispatcher
+
+<div class="ui fixed top inverted menu">
+    <div class="ui container">
+        <a class="active item">
+            <img src="/assets/logo.png"
+                 alt="logo"
+                 style="margin-right:10px;" />
+            Reactivities
+        </a>
+        <a class="item">
+            Activities
+        </a>
+        <div class="item">
+            <button class="positive ui button"
+                    @onclick="OpenCreateForm">
+                Create Activity
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    void OpenCreateForm()
+    {
+        Dispatcher.Dispatch(new SetEditModeAction(true));
+    }
+}

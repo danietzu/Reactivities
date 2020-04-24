@@ -1,0 +1,57 @@
+﻿@using Fluxor
+@using Store
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<AppState> AppState
+@inject IDispatcher Dispatcher
+
+<div class="ui clearing segment">
+    <form class="ui form">
+        <div class="field">
+            <div class="ui input">
+                <input type="text" placeholder="Title" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui input">
+                <textarea rows="2" placeholder="Description" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui input">
+                <input type="text" placeholder="Category" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui input">
+                <input type="date" placeholder="Date" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui input">
+                <input type="text" placeholder="City" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui input">
+                <input type="text" placeholder="Venue" />
+            </div>
+        </div>
+        <button type="submit" class="ui positive right floated button">
+            Submit
+        </button>
+        <button type="button"
+                class="ui right floated button"
+                @onclick="CloseCreateForm">
+            Cancel
+        </button>
+    </form>
+</div>
+
+@code {
+    void CloseCreateForm()
+    {
+        Dispatcher.Dispatch(new SetEditModeAction(false));
+    }
+}

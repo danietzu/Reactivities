@@ -1,0 +1,38 @@
+﻿@using Fluxor
+@using Store
+@using Store.Activities
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<ActivityState> ActivityState
+@inject IDispatcher Dispatcher
+
+@if (ActivityState.Value.SelectedActivity != null)
+{
+    <div class="ui card fluid">
+        <div class="image">
+            <img src="/assets/categoryImages/@(ActivityState.Value.SelectedActivity.Category).jpg" />
+        </div>
+        <div class="content">
+            <div class="header">@ActivityState.Value.SelectedActivity.Title</div>
+            <div class="meta">@ActivityState.Value.SelectedActivity.Date</div>
+            <div class="description">@ActivityState.Value.SelectedActivity.Description</div>
+        </div>
+        <div class="extra content">
+            <div class="ui two buttons">
+                <button class="ui blue basic button"
+                        @onclick="SetEditMode">
+                    Edit
+                </button>
+                <button class="ui grey basic button">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    void SetEditMode()
+    {
+        Dispatcher.Dispatch(new SetEditModeAction(true));
+    }
+}

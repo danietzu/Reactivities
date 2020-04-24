@@ -1,0 +1,21 @@
+﻿@using Fluxor
+@using Store
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IState<AppState> AppState
+
+<div class="ui grid">
+    <div class="ten wide column">
+        <ActivityList />
+    </div>
+    <div class="six wide column">
+        @if (!AppState.Value.EditMode)
+        {
+            <ActivityDetails />
+        }
+        else
+        {
+            <ActivityForm />
+        }
+    </div>
+</div>
