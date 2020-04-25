@@ -6,7 +6,7 @@ namespace Reactivities.Blazor.Store.Activities
     {
         public override ActivityState Reduce(ActivityState state, SelectActivityAction action)
         {
-            return new ActivityState(action.SelectedActivity);
+            return new ActivityState(state.Activities, action.SelectedActivity);
         }
     }
 }

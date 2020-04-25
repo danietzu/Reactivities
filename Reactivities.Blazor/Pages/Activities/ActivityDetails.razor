@@ -24,7 +24,10 @@
                         @onclick="SetEditMode">
                     Edit
                 </button>
-                <button class="ui grey basic button">Cancel</button>
+                <button class="ui grey basic button"
+                        @onclick="CloseDetailsPane">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -34,5 +37,10 @@
     void SetEditMode()
     {
         Dispatcher.Dispatch(new SetEditModeAction(true));
+    }
+
+    void CloseDetailsPane()
+    {
+        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
     }
 }

@@ -1,5 +1,7 @@
 ﻿@using Fluxor
 @using Store
+@using Store.Activities
+@using Data
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -29,6 +31,7 @@
 @code {
     void OpenCreateForm()
     {
+        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = new Activity() });
         Dispatcher.Dispatch(new SetEditModeAction(true));
     }
 }

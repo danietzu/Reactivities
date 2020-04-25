@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -7,14 +8,14 @@ namespace Reactivities.Blazor.Data
     public class ActivitiesService
     {
         private readonly HttpClient _httpClient;
-        private static Activity[] Activities;
+        private static List<Activity> Activities;
 
         public ActivitiesService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<Activity[]> GetActivities()
+        public async Task<List<Activity>> GetActivities()
         {
             var str = await _httpClient.GetStringAsync("https://localhost:4000/api/activities");
 
@@ -22,7 +23,7 @@ namespace Reactivities.Blazor.Data
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
-            Activities = JsonSerializer.Deserialize<Activity[]>(str, options);
+            Activities = JsonSerializer.Deserialize<List<Activity>>(str, options);
 
             return await Task.FromResult(Activities);
         }

@@ -5,17 +5,18 @@
 
 @inject ActivitiesService ActivitiesService
 @inject IDispatcher Dispatcher
+@inject IState<ActivityState> ActivityState
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="ui clearing segment">
     <div class="ui divided items">
-        @if (activities == null)
+        @if (ActivityState.Value.Activities == null)
         {
             <p>Loading...</p>
         }
         else
         {
-            @foreach (var activity in activities)
+            @foreach (var activity in ActivityState.Value.Activities)
             {
                 <div class="item">
                     <div class="content">
@@ -30,6 +31,10 @@
                                     @onclick="() => SelectActivity(activity)">
                                 View
                             </button>
+                            <button class="ui button red right floated"
+                                    @onclick="() => DeleteActivity(activity)">
+                                Delete
+                            </button>
                             <label class="ui basic label">@activity.Category</label>
                         </div>
                     </div>
@@ -40,20 +45,31 @@
 </div>
 
 @code {
-    private Activity[] activities;
-
     protected override async Task OnInitializedAsync()
     {
-        activities = await ActivitiesService.GetActivities();
+        var activities = await ActivitiesService.GetActivities();
+        Dispatcher.Dispatch(new SetAllActivitiesAction
+        {
+            Activities = activities.OrderByDescending(a => a.Date).ToList()
+        });
     }
 
-    private void SelectActivity(Activity selectedActivity)
+    void SelectActivity(Activity selectedActivity)
     {
         Dispatcher.Dispatch(new SetEditModeAction(false));
 
         Dispatcher.Dispatch(new SelectActivityAction
         {
             SelectedActivity = selectedActivity
+        });
+    }
+
+    void DeleteActivity(Activity selectedActivity)
+    {
+        var activities = ActivityState.Value.Activities;
+        Dispatcher.Dispatch(new SetAllActivitiesAction
+        {
+            Activities = activities.Where(a => a.Id != selectedActivity.Id).ToList()
         });
     }
 }

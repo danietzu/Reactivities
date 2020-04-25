@@ -1,57 +1,113 @@
 ﻿@using Fluxor
 @using Store
+@using Store.Activities
+@using System.Text.Json
+@using Reactivities.Blazor.Data
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @inject IState<AppState> AppState
+@inject IState<ActivityState> ActivityState
 @inject IDispatcher Dispatcher
 
-<div class="ui clearing segment">
-    <form class="ui form">
-        <div class="field">
-            <div class="ui input">
-                <input type="text" placeholder="Title" />
+@if (SelectedActivity != null)
+{
+    <div class="ui clearing segment">
+        <form class="ui form"
+              @onsubmit="LogSubmit">
+            <div class="field">
+                <div class="ui input">
+                    <input type="text"
+                           placeholder="Title"
+                           @bind="SelectedActivity.Title" />
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="ui input">
-                <textarea rows="2" placeholder="Description" />
+            <div class="field">
+                <div class="ui input">
+                    <textarea rows="2"
+                              placeholder="Description"
+                              @bind="SelectedActivity.Description" />
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="ui input">
-                <input type="text" placeholder="Category" />
+            <div class="field">
+                <div class="ui input">
+                    <input type="text"
+                           placeholder="Category"
+                           @bind="SelectedActivity.Category" />
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="ui input">
-                <input type="date" placeholder="Date" />
+            <div class="field">
+                <div class="ui input">
+                    <input type="date"
+                           placeholder="Date"
+                           @bind="SelectedActivity.Date" />
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="ui input">
-                <input type="text" placeholder="City" />
+            <div class="field">
+                <div class="ui input">
+                    <input type="text"
+                           placeholder="City"
+                           @bind="SelectedActivity.City" />
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="ui input">
-                <input type="text" placeholder="Venue" />
+            <div class="field">
+                <div class="ui input">
+                    <input type="text"
+                           placeholder="Venue"
+                           @bind="SelectedActivity.Venue" />
+                </div>
             </div>
-        </div>
-        <button type="submit" class="ui positive right floated button">
-            Submit
-        </button>
-        <button type="button"
-                class="ui right floated button"
-                @onclick="CloseCreateForm">
-            Cancel
-        </button>
-    </form>
-</div>
+            <button type="submit"
+                    class="ui positive right floated button">
+                Submit
+            </button>
+            <button type="button"
+                    class="ui right floated button"
+                    @onclick="CloseCreateForm">
+                Cancel
+            </button>
+        </form>
+        @if (!string.IsNullOrWhiteSpace(LogMessage))
+        {
+            <p>@LogMessage</p>
+        }
+    </div>
+}
 
 @code {
+    public string LogMessage { get; set; }
+    public Activity SelectedActivity
+    {
+        get => ActivityState.Value.SelectedActivity;
+    }
+
     void CloseCreateForm()
     {
+        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
+    }
+
+    void LogSubmit()
+    {
+        LogMessage = JsonSerializer.Serialize(ActivityState.Value.SelectedActivity);
+
+        var activities = ActivityState.Value.Activities;
+
+        if (string.IsNullOrWhiteSpace(SelectedActivity.Id))
+        {
+            SelectedActivity.Id = new Guid().ToString();
+        }
+        else
+        {
+            var activity = activities.Where(a => a.Id == SelectedActivity.Id).FirstOrDefault();
+            activities.Remove(activity);
+        }
+        activities.Add(SelectedActivity);
+
+        Dispatcher.Dispatch(new SetAllActivitiesAction
+        {
+            Activities = activities.OrderByDescending(a => a.Date).ToList()
+        });
+        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = SelectedActivity });
         Dispatcher.Dispatch(new SetEditModeAction(false));
     }
 }
