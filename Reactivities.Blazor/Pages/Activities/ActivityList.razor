@@ -1,18 +1,20 @@
-﻿@using Data
-@using Store
-@using Store.Activities
-@using Fluxor
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject ActivitiesService ActivitiesService
+@inject Agent Agent
 @inject IDispatcher Dispatcher
 @inject IState<ActivityState> ActivityState
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IJSRuntime js
 
 <div class="ui clearing segment">
     <div class="ui divided items">
-        @if (ActivityState.Value.Activities == null)
+        @if (activities == null)
         {
-            <p>Loading...</p>
+            <div class="ui segment">
+                <p></p>
+                <div class="ui active inverted dimmer">
+                    <div class="ui loader"></div>
+                </div>
+            </div>
         }
         else
         {
@@ -31,7 +33,8 @@
                                     @onclick="() => SelectActivity(activity)">
                                 View
                             </button>
-                            <button class="ui button red right floated"
+                            <button id="button-@activity.Id"
+                                    class="ui button red right floated"
                                     @onclick="() => DeleteActivity(activity)">
                                 Delete
                             </button>
@@ -45,13 +48,18 @@
 </div>
 
 @code {
+    List<Activity> activities;
+
     protected override async Task OnInitializedAsync()
     {
-        var activities = await ActivitiesService.GetActivities();
-        Dispatcher.Dispatch(new SetAllActivitiesAction
+        activities = await Agent.ListActivities();
+        if (activities != null)
         {
-            Activities = activities.OrderByDescending(a => a.Date).ToList()
-        });
+            Dispatcher.Dispatch(new SetAllActivitiesAction
+            {
+                Activities = activities.OrderByDescending(a => a.Date).ToList()
+            });
+        }
     }
 
     void SelectActivity(Activity selectedActivity)
@@ -64,12 +72,22 @@
         });
     }
 
-    void DeleteActivity(Activity selectedActivity)
+    async Task DeleteActivity(Activity selectedActivity)
     {
-        var activities = ActivityState.Value.Activities;
-        Dispatcher.Dispatch(new SetAllActivitiesAction
+        await js.InvokeVoidAsync("toggleClass", $"button-{selectedActivity.Id}", "loading");
+
+        var deleteResponse = await Agent.DeleteActivity(selectedActivity.Id);
+        await js.InvokeVoidAsync("log", deleteResponse);
+
+        if (deleteResponse.IsSuccessStatusCode)
         {
-            Activities = activities.Where(a => a.Id != selectedActivity.Id).ToList()
-        });
+            await js.InvokeVoidAsync("toggleClass", $"button-{selectedActivity.Id}", "loading");
+
+            var activities = ActivityState.Value.Activities;
+            Dispatcher.Dispatch(new SetAllActivitiesAction
+            {
+                Activities = activities.Where(a => a.Id != selectedActivity.Id).ToList()
+            });
+        }
     }
 }

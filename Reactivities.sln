@@ -16,27 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "client-app", "client-app\", "{0B329584-BA6F-466A-90BA-942FE63E2C0C}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_51192"
-		Debug.AspNetCompiler.PhysicalPath = "client-app\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51192\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_51192"
-		Release.AspNetCompiler.PhysicalPath = "client-app\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51192\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "51192"
-		SlnRelativePath = "client-app\"
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reactivities.Blazor", "Reactivities.Blazor\Reactivities.Blazor.csproj", "{694E007B-199E-431C-B083-CFF38409B890}"
 EndProject
 Global
@@ -97,17 +76,6 @@ Global
 		{D240A852-74F0-4B0D-917C-28B07C4D2ABE}.Release|x64.Build.0 = Release|Any CPU
 		{D240A852-74F0-4B0D-917C-28B07C4D2ABE}.Release|x86.ActiveCfg = Release|Any CPU
 		{D240A852-74F0-4B0D-917C-28B07C4D2ABE}.Release|x86.Build.0 = Release|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Debug|x64.Build.0 = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Debug|x86.Build.0 = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|Any CPU.Build.0 = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|x64.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|x64.Build.0 = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|x86.ActiveCfg = Debug|Any CPU
-		{0B329584-BA6F-466A-90BA-942FE63E2C0C}.Release|x86.Build.0 = Debug|Any CPU
 		{694E007B-199E-431C-B083-CFF38409B890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{694E007B-199E-431C-B083-CFF38409B890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{694E007B-199E-431C-B083-CFF38409B890}.Debug|x64.ActiveCfg = Debug|Any CPU

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Reactivities.Blazor.Api;
 using Reactivities.Blazor.Data;
 using System;
 using System.Net.Http;
@@ -27,7 +28,7 @@ namespace Reactivities.Blazor
             {
                 BaseAddress = new Uri("https://localhost:5001")
             });
-            services.AddSingleton<ActivitiesService>();
+            services.AddSingleton<Agent>();
 
             services.AddFluxor(options =>
             {

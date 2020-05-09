@@ -21,5 +21,14 @@
     </app>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        function log(message) {
+            console.log(message);
+        }
+        function toggleClass(id, className) {
+            var element = document.getElementById(id);
+            element.classList.toggle(className);
+        }
+    </script>
 </body>
 </html>

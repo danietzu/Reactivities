@@ -1,14 +1,10 @@
-﻿@using Fluxor
-@using Store
-@using Store.Activities
-@using System.Text.Json
-@using Reactivities.Blazor.Data
-
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @inject IState<AppState> AppState
 @inject IState<ActivityState> ActivityState
 @inject IDispatcher Dispatcher
+@inject Agent Agent
+@inject IJSRuntime js
 
 @if (SelectedActivity != null)
 {
@@ -58,7 +54,8 @@
                 </div>
             </div>
             <button type="submit"
-                    class="ui positive right floated button">
+                    class="ui positive right floated button
+                    @(loading ? "loading" : "")">
                 Submit
             </button>
             <button type="button"
@@ -67,15 +64,11 @@
                 Cancel
             </button>
         </form>
-        @if (!string.IsNullOrWhiteSpace(LogMessage))
-        {
-            <p>@LogMessage</p>
-        }
     </div>
 }
 
 @code {
-    public string LogMessage { get; set; }
+    bool loading;
     public Activity SelectedActivity
     {
         get => ActivityState.Value.SelectedActivity;
@@ -86,28 +79,46 @@
         Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
     }
 
-    void LogSubmit()
+    async Task LogSubmit()
     {
-        LogMessage = JsonSerializer.Serialize(ActivityState.Value.SelectedActivity);
+        loading = true;
 
+        bool isNew;
+        HttpResponseMessage response;
         var activities = ActivityState.Value.Activities;
 
         if (string.IsNullOrWhiteSpace(SelectedActivity.Id))
         {
             SelectedActivity.Id = new Guid().ToString();
+            response = await Agent.CreateActivity(SelectedActivity);
+            isNew = true;
         }
         else
         {
-            var activity = activities.Where(a => a.Id == SelectedActivity.Id).FirstOrDefault();
-            activities.Remove(activity);
+            response = await Agent.UpdateActivity(SelectedActivity);
+            isNew = false;
         }
-        activities.Add(SelectedActivity);
 
-        Dispatcher.Dispatch(new SetAllActivitiesAction
+        await js.InvokeVoidAsync("log", response);
+
+        if (response.IsSuccessStatusCode)
         {
-            Activities = activities.OrderByDescending(a => a.Date).ToList()
-        });
-        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = SelectedActivity });
-        Dispatcher.Dispatch(new SetEditModeAction(false));
+            if (isNew == false)
+            {
+                var activity = activities.Where(a => a.Id == SelectedActivity.Id).FirstOrDefault();
+                activities.Remove(activity);
+            }
+
+            activities.Add(SelectedActivity);
+
+            Dispatcher.Dispatch(new SetAllActivitiesAction
+            {
+                Activities = activities.OrderByDescending(a => a.Date).ToList()
+            });
+            Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = SelectedActivity });
+            Dispatcher.Dispatch(new SetEditModeAction(false));
+
+            loading = false;
+        }
     }
 }
