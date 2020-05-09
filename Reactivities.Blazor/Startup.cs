@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Reactivities.Blazor.Api;
-using Reactivities.Blazor.Data;
 using System;
 using System.Net.Http;
 

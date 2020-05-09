@@ -14,9 +14,8 @@
 </Router>
 
 @code {
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        Store.InitializeAsync();
-        return base.OnInitializedAsync();
+        await Store.InitializeAsync();
     }
 }
