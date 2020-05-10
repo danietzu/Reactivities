@@ -1,9 +1,12 @@
-﻿@inherits FluxorComponent
+﻿@page "/activities"
+
+@inherits FluxorComponent
 
 @inject Agent Agent
 @inject IDispatcher Dispatcher
 @inject IState<ActivityState> ActivityState
 @inject IJSRuntime js
+@inject NavigationManager NavManager
 
 <div class="ui clearing segment">
     <div class="ui divided items">
@@ -52,24 +55,28 @@
 
     protected override async Task OnInitializedAsync()
     {
-        activities = await Agent.ListActivities();
-        if (activities != null)
+        if (ActivityState.Value.Activities.Count == 0)
         {
-            Dispatcher.Dispatch(new SetAllActivitiesAction
+            var response = await Agent.ListActivities();
+            if (response != null)
             {
-                Activities = activities.OrderByDescending(a => a.Date).ToList()
-            });
+                Dispatcher.Dispatch(new SetAllActivitiesAction
+                {
+                    Activities = response.OrderByDescending(a => a.Date).ToList()
+                });
+            }
         }
+
+        activities = ActivityState.Value.Activities;
     }
 
     void SelectActivity(Activity selectedActivity)
     {
-        Dispatcher.Dispatch(new SetEditModeAction(false));
-
         Dispatcher.Dispatch(new SelectActivityAction
         {
             SelectedActivity = selectedActivity
         });
+        NavManager.NavigateTo($"/activities/{selectedActivity.Id}");
     }
 
     async Task DeleteActivity(Activity selectedActivity)

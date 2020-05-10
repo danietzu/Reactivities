@@ -1,42 +1,74 @@
-﻿@inherits FluxorComponent
+﻿@page "/activities/{Id}"
+
+@inherits FluxorComponent
 
 @inject IState<ActivityState> ActivityState
+@inject NavigationManager NavManager
 @inject IDispatcher Dispatcher
+@inject Agent Agent
 
-@if (ActivityState.Value.SelectedActivity != null)
+@if (loading)
 {
-    <div class="ui card fluid">
-        <div class="image">
-            <img src="/assets/categoryImages/@(ActivityState.Value.SelectedActivity.Category).jpg" />
-        </div>
-        <div class="content">
-            <div class="header">@ActivityState.Value.SelectedActivity.Title</div>
-            <div class="meta">@ActivityState.Value.SelectedActivity.Date</div>
-            <div class="description">@ActivityState.Value.SelectedActivity.Description</div>
-        </div>
-        <div class="extra content">
-            <div class="ui two buttons">
-                <button class="ui blue basic button"
-                        @onclick="SetEditMode">
-                    Edit
-                </button>
-                <button class="ui grey basic button"
-                        @onclick="CloseDetailsPane">
-                    Cancel
-                </button>
-            </div>
+    <div class="ui segment">
+        <p></p>
+        <div class="ui active inverted dimmer">
+            <div class="ui loader"></div>
         </div>
     </div>
 }
+else
+{
+    if (SelectedActivity != null)
+    {
+        <div class="ui card fluid">
+            <div class="image">
+                <img src="/assets/categoryImages/@(SelectedActivity.Category).jpg" />
+            </div>
+            <div class="content">
+                <div class="header">@SelectedActivity.Title</div>
+                <div class="meta">@SelectedActivity.Date</div>
+                <div class="description">@SelectedActivity.Description</div>
+            </div>
+            <div class="extra content">
+                <div class="ui two buttons">
+                    <button class="ui blue basic button"
+                            @onclick="@(() => NavManager.NavigateTo("createActivity"))">
+                        Edit
+                    </button>
+                    <button class="ui grey basic button"
+                            @onclick="@(async () => NavManager.NavigateTo("/activities"))">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Sorry, page not found.</p>
+    }
+}
 
 @code {
-    void SetEditMode()
-    {
-        Dispatcher.Dispatch(new SetEditModeAction(true));
-    }
+    [Parameter]
+    public string Id { get; set; }
 
-    void CloseDetailsPane()
+    Activity SelectedActivity;
+    bool loading;
+
+    protected override async Task OnInitializedAsync()
     {
-        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
+        loading = true;
+
+        if (ActivityState.Value.SelectedActivity == null)
+        {
+            var activity = await Agent.GetActivity(Id);
+            if (activity != null)
+                SelectedActivity = activity;
+        }
+        else
+            SelectedActivity = ActivityState.Value.SelectedActivity;
+
+        loading = false;
     }
 }

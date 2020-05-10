@@ -17,7 +17,7 @@
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="Server" />
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
     </app>
 
     <script src="_framework/blazor.server.js"></script>
@@ -28,6 +28,9 @@
         function toggleClass(id, className) {
             var element = document.getElementById(id);
             element.classList.toggle(className);
+        }
+        function goBack() {
+            window.history.back();
         }
     </script>
 </body>

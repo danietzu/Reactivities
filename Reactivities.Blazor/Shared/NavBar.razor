@@ -1,32 +1,34 @@
 ﻿@inherits FluxorComponent
 
-@inject IState<AppState> AppState
 @inject IDispatcher Dispatcher
 
 <div class="ui fixed top inverted menu">
     <div class="ui container">
-        <a class="active item">
+        <NavLink Match="NavLinkMatch.All"
+                 href=""
+                 class="item">
             <img src="/assets/logo.png"
                  alt="logo"
                  style="margin-right:10px;" />
             Reactivities
-        </a>
-        <a class="item">
+        </NavLink>
+        <NavLink href="activities"
+                 class="item">
             Activities
-        </a>
+        </NavLink>
         <div class="item">
-            <button class="positive ui button"
-                    @onclick="OpenCreateForm">
+            <NavLink href="createActivity"
+                     class="positive ui button"
+                     @onclick="ResetForm">
                 Create Activity
-            </button>
+            </NavLink>
         </div>
     </div>
 </div>
 
 @code {
-    void OpenCreateForm()
+    void ResetForm()
     {
-        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = new Activity() });
-        Dispatcher.Dispatch(new SetEditModeAction(true));
+        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
     }
 }

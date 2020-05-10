@@ -1,7 +1,9 @@
-﻿@inherits FluxorComponent
+﻿@page "/createActivity"
 
-@inject IState<AppState> AppState
+@inherits FluxorComponent
+
 @inject IState<ActivityState> ActivityState
+@inject NavigationManager NavManager
 @inject IDispatcher Dispatcher
 @inject Agent Agent
 @inject IJSRuntime js
@@ -10,7 +12,7 @@
 {
     <div class="ui clearing segment">
         <form class="ui form"
-              @onsubmit="LogSubmit">
+              @onsubmit="HandleSubmit">
             <div class="field">
                 <div class="ui input">
                     <input type="text"
@@ -55,12 +57,13 @@
             </div>
             <button type="submit"
                     class="ui positive right floated button
-                    @(loading ? "loading" : "")">
+                    @(loading ? " loading" : "")">
                 Submit
             </button>
             <button type="button"
                     class="ui right floated button"
-                    @onclick="CloseCreateForm">
+                    @onclick="@(async () =>
+                                NavManager.NavigateTo($"/activities/{SelectedActivity.Id}"))">
                 Cancel
             </button>
         </form>
@@ -71,15 +74,22 @@
     bool loading;
     public Activity SelectedActivity
     {
-        get => ActivityState.Value.SelectedActivity;
+        get
+        {
+            if (ActivityState.Value.SelectedActivity == null)
+                return new Activity();
+            else
+                return ActivityState.Value.SelectedActivity;
+        }
     }
 
-    void CloseCreateForm()
-    {
-        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
-    }
+    //protected override void Dispose(bool disposing)
+    //{
+    //    Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
+    //    base.Dispose(disposing);
+    //}
 
-    async Task LogSubmit()
+    async Task HandleSubmit()
     {
         loading = true;
 
@@ -109,16 +119,16 @@
                 activities.Remove(activity);
             }
 
+            // update the UI via the store
             activities.Add(SelectedActivity);
-
             Dispatcher.Dispatch(new SetAllActivitiesAction
             {
                 Activities = activities.OrderByDescending(a => a.Date).ToList()
             });
-            Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = SelectedActivity });
-            Dispatcher.Dispatch(new SetEditModeAction(false));
+            //Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
 
             loading = false;
+            NavManager.NavigateTo($"/activities/{SelectedActivity.Id}");
         }
     }
 }
