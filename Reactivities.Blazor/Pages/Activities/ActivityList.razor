@@ -55,17 +55,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (ActivityState.Value.Activities.Count == 0)
+        //if (ActivityState.Value.Activities.Count == 0)
+        //{
+        var response = await Agent.ListActivities();
+        if (response != null)
         {
-            var response = await Agent.ListActivities();
-            if (response != null)
+            Dispatcher.Dispatch(new SetAllActivitiesAction
             {
-                Dispatcher.Dispatch(new SetAllActivitiesAction
-                {
-                    Activities = response.OrderByDescending(a => a.Date).ToList()
-                });
-            }
+                Activities = response.OrderByDescending(a => a.Date).ToList()
+            });
         }
+        //}
+        // PROBLEM: we are doing too many requests to the API
+        // but for now is necessary because new activities don't have a valid guid until new fetch
 
         activities = ActivityState.Value.Activities;
     }

@@ -1,4 +1,5 @@
 ﻿@page "/createActivity"
+@page "/manage/{Id}"
 
 @inherits FluxorComponent
 
@@ -8,7 +9,16 @@
 @inject Agent Agent
 @inject IJSRuntime js
 
-@if (SelectedActivity != null)
+@if (loadingPage)
+{
+    <div class="ui segment">
+        <p></p>
+        <div class="ui active inverted dimmer">
+            <div class="ui loader"></div>
+        </div>
+    </div>
+}
+else
 {
     <div class="ui clearing segment">
         <form class="ui form"
@@ -17,53 +27,53 @@
                 <div class="ui input">
                     <input type="text"
                            placeholder="Title"
-                           @bind="SelectedActivity.Title" />
+                           @bind="Activity.Title" />
                 </div>
             </div>
             <div class="field">
                 <div class="ui input">
                     <textarea rows="2"
                               placeholder="Description"
-                              @bind="SelectedActivity.Description" />
+                              @bind="Activity.Description" />
                 </div>
             </div>
             <div class="field">
                 <div class="ui input">
                     <input type="text"
                            placeholder="Category"
-                           @bind="SelectedActivity.Category" />
+                           @bind="Activity.Category" />
                 </div>
             </div>
             <div class="field">
                 <div class="ui input">
                     <input type="date"
                            placeholder="Date"
-                           @bind="SelectedActivity.Date" />
+                           @bind="Activity.Date" />
                 </div>
             </div>
             <div class="field">
                 <div class="ui input">
                     <input type="text"
                            placeholder="City"
-                           @bind="SelectedActivity.City" />
+                           @bind="Activity.City" />
                 </div>
             </div>
             <div class="field">
                 <div class="ui input">
                     <input type="text"
                            placeholder="Venue"
-                           @bind="SelectedActivity.Venue" />
+                           @bind="Activity.Venue" />
                 </div>
             </div>
             <button type="submit"
                     class="ui positive right floated button
-                    @(loading ? " loading" : "")">
+                    @(loadingButton ? " loading" : "" )">
                 Submit
             </button>
             <button type="button"
                     class="ui right floated button"
                     @onclick="@(async () =>
-                                NavManager.NavigateTo($"/activities/{SelectedActivity.Id}"))">
+                                NavManager.NavigateTo($" /activities/{Activity.Id}"))">
                 Cancel
             </button>
         </form>
@@ -71,41 +81,48 @@
 }
 
 @code {
-    bool loading;
-    public Activity SelectedActivity
+    [Parameter]
+    public string Id { get; set; }
+
+    bool loadingPage;
+    bool loadingButton;
+    Activity Activity = new Activity();
+
+    protected override async Task OnInitializedAsync()
     {
-        get
+        if (ActivityState.Value.SelectedActivity != null)
+            Activity = ActivityState.Value.SelectedActivity;
+        else if (Id != null)
         {
-            if (ActivityState.Value.SelectedActivity == null)
-                return new Activity();
-            else
-                return ActivityState.Value.SelectedActivity;
+            loadingPage = true;
+            Activity = await Agent.GetActivity(Id);
+            loadingPage = false;
         }
     }
 
-    //protected override void Dispose(bool disposing)
-    //{
-    //    Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
-    //    base.Dispose(disposing);
-    //}
+    protected override void OnParametersSet()
+    {
+        if (NavManager.ToBaseRelativePath(NavManager.Uri).StartsWith("create"))
+            Activity = new Activity();
+    }
 
     async Task HandleSubmit()
     {
-        loading = true;
+        loadingButton = true;
 
         bool isNew;
         HttpResponseMessage response;
         var activities = ActivityState.Value.Activities;
 
-        if (string.IsNullOrWhiteSpace(SelectedActivity.Id))
+        if (NavManager.ToBaseRelativePath(NavManager.Uri).StartsWith("create"))
         {
-            SelectedActivity.Id = new Guid().ToString();
-            response = await Agent.CreateActivity(SelectedActivity);
+            Activity.Id = new Guid().ToString();
+            response = await Agent.CreateActivity(Activity);
             isNew = true;
         }
         else
         {
-            response = await Agent.UpdateActivity(SelectedActivity);
+            response = await Agent.UpdateActivity(Activity);
             isNew = false;
         }
 
@@ -115,20 +132,20 @@
         {
             if (isNew == false)
             {
-                var activity = activities.Where(a => a.Id == SelectedActivity.Id).FirstOrDefault();
+                var activity = activities.Where(a => a.Id == Activity.Id).FirstOrDefault();
                 activities.Remove(activity);
             }
 
-            // update the UI via the store
-            activities.Add(SelectedActivity);
+            activities.Add(Activity);
             Dispatcher.Dispatch(new SetAllActivitiesAction
             {
                 Activities = activities.OrderByDescending(a => a.Date).ToList()
             });
-            //Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
 
-            loading = false;
-            NavManager.NavigateTo($"/activities/{SelectedActivity.Id}");
+            loadingButton = false;
+            NavManager.NavigateTo($"/activities");
+            // PROBLEM: in this way we are retreaving again every activity for each new one created
+            // TODO: get the new activity back from the API and redirect to its details page
         }
     }
 }

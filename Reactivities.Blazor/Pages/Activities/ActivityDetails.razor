@@ -18,25 +18,25 @@
 }
 else
 {
-    if (SelectedActivity != null)
+    if (Activity != null)
     {
         <div class="ui card fluid">
             <div class="image">
-                <img src="/assets/categoryImages/@(SelectedActivity.Category).jpg" />
+                <img src="/assets/categoryImages/@(Activity.Category).jpg" />
             </div>
             <div class="content">
-                <div class="header">@SelectedActivity.Title</div>
-                <div class="meta">@SelectedActivity.Date</div>
-                <div class="description">@SelectedActivity.Description</div>
+                <div class="header">@Activity.Title</div>
+                <div class="meta">@Activity.Date</div>
+                <div class="description">@Activity.Description</div>
             </div>
             <div class="extra content">
                 <div class="ui two buttons">
                     <button class="ui blue basic button"
-                            @onclick="@(() => NavManager.NavigateTo("createActivity"))">
+                            @onclick="@(() => NavManager.NavigateTo($"manage/{Activity.Id}"))">
                         Edit
                     </button>
                     <button class="ui grey basic button"
-                            @onclick="@(async () => NavManager.NavigateTo("/activities"))">
+                            @onclick="@(async () => NavManager.NavigateTo("activities"))">
                         Cancel
                     </button>
                 </div>
@@ -53,7 +53,7 @@ else
     [Parameter]
     public string Id { get; set; }
 
-    Activity SelectedActivity;
+    Activity Activity;
     bool loading;
 
     protected override async Task OnInitializedAsync()
@@ -64,10 +64,10 @@ else
         {
             var activity = await Agent.GetActivity(Id);
             if (activity != null)
-                SelectedActivity = activity;
+                Activity = activity;
         }
         else
-            SelectedActivity = ActivityState.Value.SelectedActivity;
+            Activity = ActivityState.Value.SelectedActivity;
 
         loading = false;
     }
