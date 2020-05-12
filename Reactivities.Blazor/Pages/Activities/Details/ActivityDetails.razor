@@ -20,26 +20,14 @@ else
 {
     if (Activity != null)
     {
-        <div class="ui card fluid">
-            <div class="image">
-                <img src="/assets/categoryImages/@(Activity.Category).jpg" />
+        <div class="ui grid">
+            <div class="ten wide column">
+                <ActivityDetailedHeader Activity="Activity" />
+                <ActivityDetailedInfo Activity="Activity" />
+                <ActivityDetailedChat />
             </div>
-            <div class="content">
-                <div class="header">@Activity.Title</div>
-                <div class="meta">@Activity.Date</div>
-                <div class="description">@Activity.Description</div>
-            </div>
-            <div class="extra content">
-                <div class="ui two buttons">
-                    <button class="ui blue basic button"
-                            @onclick="@(() => NavManager.NavigateTo($"manage/{Activity.Id}"))">
-                        Edit
-                    </button>
-                    <button class="ui grey basic button"
-                            @onclick="@(async () => NavManager.NavigateTo("activities"))">
-                        Cancel
-                    </button>
-                </div>
+            <div class="six wide column">
+                <ActivityDetailedSidebar />
             </div>
         </div>
     }

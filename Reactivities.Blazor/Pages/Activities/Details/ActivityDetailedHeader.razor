@@ -1,0 +1,44 @@
+﻿@if (Activity != null)
+{
+    <div class="ui segments">
+        <div class="ui segment attached top"
+             style="padding: 0">
+            <img class="fluid"
+                 style="width: 100%;
+                        height: 100%;
+                        filter: brightness(30%);"
+                 src=@($"assets/categoryImages/{Activity.Category}.jpg")
+                 alt="Header" />
+            <div class="ui basic segment"
+                 style="position: absolute;
+                        bottom: 5%;
+                        left: 5%;
+                        width: 100%;
+                        height: auto;
+                        color: white;">
+                <div class="ui items">
+                    <div class="ui item">
+                        <div class="content">
+                            <header class="huge"
+                                    style="color: white;">
+                                <h1>@Activity.Title</h1>
+                            </header>
+                            <p>@Activity.Date</p>
+                            <p>Hosted by <strong>Bob</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui segment attached bottom clearing">
+            <button class="ui button teal">Join Activity</button>
+            <button class="ui button">Cancel attendance</button>
+            <button class="ui button orange floated right">Manage Event</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Activity Activity { get; set; }
+}

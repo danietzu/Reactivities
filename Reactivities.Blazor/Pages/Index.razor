@@ -1,8 +1,49 @@
 ﻿@page "/"
 @layout HomeLayout
 
-<h1>Home Page</h1>
-<p>Go to <NavLink href="activities">Activities</NavLink></p>
+<div class="ui segment inverted masthead">
+    <div class="ui container"
+         style="text-align: center;">
+        <header class="inverted">
+            <img class="ui image" src="assets/logo.png" alt="Logo"
+                 style="margin-bottom: 12px;
+                        margin: auto;" />
+            <h1>Reactivities</h1>
+        </header>
+        <header class="inverted">
+            <h2>Welcome to Reactivities</h2>
+            <NavLink href="activities">
+                <button class="ui button huge inverted">
+                    Take me to the activities!
+                </button>
+            </NavLink>
+        </header>
+    </div>
+</div>
+
+<style>
+    .masthead {
+        display: flex;
+        align-items: center;
+        background-image: linear-gradient( 135deg, rgb(24, 42, 115) 0%, rgb(33, 138, 174) 69%, rgb(32, 167, 172) 89% ) !important;
+        height: 100vh;
+    }
+
+        .masthead .ui.menu .ui.button,
+        .ui.menu a.ui.inverted.button {
+            margin-left: 0.5em;
+        }
+
+        .masthead h1.ui.header {
+            font-size: 4em;
+            font-weight: normal;
+        }
+
+        .masthead h2 {
+            font-size: 1.7em;
+            font-weight: normal;
+        }
+</style>
 
 @code {
 

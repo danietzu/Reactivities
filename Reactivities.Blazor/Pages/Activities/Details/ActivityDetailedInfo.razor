@@ -1,0 +1,40 @@
+﻿@if (Activity != null)
+{
+    <div class="ui segments">
+        <div class="ui segment attached top">
+            <div class="ui grid">
+                <div class="one wide column">
+                    <i class="icon info teal large"></i>
+                </div>
+                <div class="fifteen wide column">
+                    <p>@Activity.Description</p>
+                </div>
+            </div>
+        </div>
+        <div class="ui segment attached">
+            <div class="ui grid middle">
+                <div class="one wide column">
+                    <i class="icon calendar large teal"></i>
+                </div>
+                <div class="fifteen wide column">
+                    <span>@Activity.Date</span>
+                </div>
+            </div>
+        </div>
+        <div class="ui segment attached">
+            <div class="ui grid middle">
+                <div class="one wide column">
+                    <i class="icon marker large teal"></i>
+                </div>
+                <div class="eleven wide column">
+                    <span>@Activity.Venue</span> <span>@Activity.City</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Activity Activity { get; set; }
+}

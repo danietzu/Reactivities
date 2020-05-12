@@ -20,63 +20,67 @@
 }
 else
 {
-    <div class="ui clearing segment">
-        <form class="ui form"
-              @onsubmit="HandleSubmit">
-            <div class="field">
-                <div class="ui input">
-                    <input type="text"
-                           placeholder="Title"
-                           @bind="Activity.Title" />
-                </div>
-            </div>
-            <div class="field">
-                <div class="ui input">
-                    <textarea rows="2"
-                              placeholder="Description"
-                              @bind="Activity.Description" />
-                </div>
-            </div>
-            <div class="field">
-                <div class="ui input">
-                    <input type="text"
-                           placeholder="Category"
-                           @bind="Activity.Category" />
-                </div>
-            </div>
-            <div class="field">
-                <div class="ui input">
-                    <input type="date"
-                           placeholder="Date"
-                           @bind="Activity.Date" />
-                </div>
-            </div>
-            <div class="field">
-                <div class="ui input">
-                    <input type="text"
-                           placeholder="City"
-                           @bind="Activity.City" />
-                </div>
-            </div>
-            <div class="field">
-                <div class="ui input">
-                    <input type="text"
-                           placeholder="Venue"
-                           @bind="Activity.Venue" />
-                </div>
-            </div>
-            <button type="submit"
-                    class="ui positive right floated button
+    <div class="ui grid">
+        <div class="ten wide column">
+            <div class="ui clearing segment">
+                <form class="ui form"
+                      @onsubmit="HandleSubmit">
+                    <div class="field">
+                        <div class="ui input">
+                            <input type="text"
+                                   placeholder="Title"
+                                   @bind="Activity.Title" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui input">
+                            <textarea rows="2"
+                                      placeholder="Description"
+                                      @bind="Activity.Description" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui input">
+                            <input type="text"
+                                   placeholder="Category"
+                                   @bind="Activity.Category" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui input">
+                            <input type="date"
+                                   placeholder="Date"
+                                   @bind="Activity.Date" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui input">
+                            <input type="text"
+                                   placeholder="City"
+                                   @bind="Activity.City" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui input">
+                            <input type="text"
+                                   placeholder="Venue"
+                                   @bind="Activity.Venue" />
+                        </div>
+                    </div>
+                    <button type="submit"
+                            class="ui positive right floated button
                     @(loadingButton ? " loading" : "" )">
-                Submit
-            </button>
-            <button type="button"
-                    class="ui right floated button"
-                    @onclick="@(async () =>
+                        Submit
+                    </button>
+                    <button type="button"
+                            class="ui right floated button"
+                            @onclick="@(async () =>
                                 NavManager.NavigateTo($" /activities/{Activity.Id}"))">
-                Cancel
-            </button>
-        </form>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 }
 
