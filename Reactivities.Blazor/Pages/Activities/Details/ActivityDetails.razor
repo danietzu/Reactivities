@@ -31,10 +31,6 @@ else
             </div>
         </div>
     }
-    else
-    {
-        <p>Sorry, page not found.</p>
-    }
 }
 
 @code {
@@ -47,16 +43,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-
-        if (ActivityState.Value.SelectedActivity == null)
-        {
-            var activity = await Agent.GetActivity(Id);
-            if (activity != null)
-                Activity = activity;
-        }
-        else
-            Activity = ActivityState.Value.SelectedActivity;
-
+        Activity = await Agent.GetActivity(Id);
         loading = false;
     }
 }

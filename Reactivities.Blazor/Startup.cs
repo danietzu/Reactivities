@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using Fluxor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,12 +28,13 @@ namespace Reactivities.Blazor
             {
                 BaseAddress = new Uri("https://localhost:5001")
             });
-            services.AddSingleton<Agent>();
+            services.AddScoped<Agent>();
 
             services.AddFluxor(options =>
             {
                 options.ScanAssemblies(typeof(Startup).Assembly);
             });
+            services.AddBlazoredToast();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

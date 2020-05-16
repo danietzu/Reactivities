@@ -1,5 +1,9 @@
-﻿using Reactivities.Blazor.Data;
+﻿using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Reactivities.Blazor.Data;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -11,15 +15,24 @@ namespace Reactivities.Blazor.Api
     {
         private readonly string _baseUrl = "https://localhost:4000/api";
         private readonly HttpClient _client;
+        private readonly NavigationManager _navigationManager;
+        private readonly IJSRuntime _js;
+        private readonly IToastService _toastService;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        public Agent(HttpClient client)
+        public Agent(HttpClient client,
+                     NavigationManager navigationManager,
+                     IJSRuntime js,
+                     IToastService toastService)
         {
             _client = client;
+            _navigationManager = navigationManager;
+            _js = js;
+            _toastService = toastService;
             //_client.DefaultRequestHeaders ...
         }
 
@@ -36,7 +49,22 @@ namespace Reactivities.Blazor.Api
             var response = await _get($"/activities/{id}");
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<Activity>(content, _jsonSerializerOptions);
+            // TODO: handle Network Error
+
+            if (response.StatusCode == HttpStatusCode.NotFound ||
+                response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                _navigationManager.NavigateTo("error");
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                _toastService.ShowError(response.ReasonPhrase);
+                return null;
+            }
+            else
+                return JsonSerializer.Deserialize<Activity>(content, _jsonSerializerOptions);
+
+            return null;
         }
 
         public async Task<HttpResponseMessage> CreateActivity(Activity activity)
