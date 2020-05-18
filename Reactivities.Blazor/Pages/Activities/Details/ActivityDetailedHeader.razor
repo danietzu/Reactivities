@@ -23,7 +23,7 @@
                                     style="color: white;">
                                 <h1>@Activity.Title</h1>
                             </header>
-                            <p>@Activity.Date</p>
+                            <p>@Activity.Date.ToString("dddd dd MMMM")</p>
                             <p>Hosted by <strong>Bob</strong></p>
                         </div>
                     </div>
@@ -33,7 +33,9 @@
         <div class="ui segment attached bottom clearing">
             <button class="ui button teal">Join Activity</button>
             <button class="ui button">Cancel attendance</button>
-            <button class="ui button orange floated right">Manage Event</button>
+            <NavLink href=@($"manage/{Activity.Id}")>
+                <button class="ui button right floated orange">Manage Event</button>
+            </NavLink>
         </div>
     </div>
 }

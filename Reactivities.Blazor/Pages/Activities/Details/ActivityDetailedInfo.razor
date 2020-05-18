@@ -17,7 +17,9 @@
                     <i class="icon calendar large teal"></i>
                 </div>
                 <div class="fifteen wide column">
-                    <span>@Activity.Date</span>
+                    <span>
+                        @Activity.Date.ToString("dddd dd MMMM") at @Activity.Date.ToString("hh:mm tt")
+                    </span>
                 </div>
             </div>
         </div>

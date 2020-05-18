@@ -20,86 +20,118 @@
 }
 else
 {
-    <div class="ui grid">
-        <div class="ten wide column">
-            <div class="ui clearing segment">
-                <form class="ui form"
-                      @onsubmit="HandleSubmit">
-                    <div class="field">
-                        <div class="ui input">
-                            <input type="text"
-                                   placeholder="Title"
-                                   @bind="Activity.Title" />
+    if (Activity != null)
+    {
+        <div class="ui grid">
+            <div class="ten wide column">
+                <div class="ui clearing segment">
+                    <EditForm class="ui form"
+                              Model="Activity"
+                              OnValidSubmit="HandleSubmit">
+                        <DataAnnotationsValidator />
+                        <div class="field">
+                            <div class="ui input">
+                                <InputText id="title"
+                                           placeholder="Title"
+                                           @bind-Value="Activity.Title" />
+                            </div>
+                            <ValidationMessage For="() => Activity.Title" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui input">
-                            <textarea rows="2"
-                                      placeholder="Description"
-                                      @bind="Activity.Description" />
+                        <div class="field">
+                            <div class="ui input">
+                                <InputTextArea id="description"
+                                               rows="2"
+                                               placeholder="Description"
+                                               @bind-Value="Activity.Description" />
+                            </div>
+                            <ValidationMessage For="() => Activity.Description" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui input">
-                            <input type="text"
-                                   placeholder="Category"
-                                   @bind="Activity.Category" />
+                        <div class="field">
+                            <div class="ui input">
+                                <InputSelect id="category"
+                                             placeholder="Category"
+                                             @bind-Value="Activity.Category">
+                                    <option value="">Select a category...</option>
+                                    @foreach (var category in Activity.Categories)
+                                            {
+                                        <option value="@category.ToLower()">@category</option>
+                                            }
+                                    /**/
+                                </InputSelect>
+                            </div>
+                            <ValidationMessage For="() => Activity.Category" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui input">
-                            <input type="date"
-                                   placeholder="Date"
-                                   @bind="Activity.Date" />
+                        <div class="two fields">
+                            <div class="field">
+                                <input @bind="Activity.Date"
+                                       @bind:format="yyyy-MM-dd"
+                                       type="date" />
+                            </div>
+                            <div class="field">
+                                <input @bind="Activity.Time"
+                                       @bind:format="HH:mm:ss"
+                                       type="time" />
+                            </div>
+                            <ValidationMessage For="() => Activity.Date" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui input">
-                            <input type="text"
-                                   placeholder="City"
-                                   @bind="Activity.City" />
+                        <div class="field">
+                            <div class="ui input">
+                                <InputText id="city"
+                                           placeholder="City"
+                                           @bind-Value="Activity.City" />
+                            </div>
+                            <ValidationMessage For="() => Activity.City" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui input">
-                            <input type="text"
-                                   placeholder="Venue"
-                                   @bind="Activity.Venue" />
+                        <div class="field">
+                            <div class="ui input">
+                                <InputText id="venue"
+                                           placeholder="Venue"
+                                           @bind-Value="Activity.Venue" />
+                            </div>
+                            <ValidationMessage For="() => Activity.Venue" />
                         </div>
-                    </div>
-                    <button type="submit"
-                            class="ui positive right floated button
-                    @(loadingButton ? " loading" : "" )">
-                        Submit
-                    </button>
-                    <button type="button"
-                            class="ui right floated button"
-                            @onclick="@(async () =>
+                        <button type="submit"
+                                class="ui positive right floated button
+                                       @(loadingButton ? " loading" : "" )">
+                            Submit
+                        </button>
+                        <button type="button"
+                                class="ui right floated button"
+                                @onclick="@(async () =>
                                 NavManager.NavigateTo($" /activities/{Activity.Id}"))">
-                        Cancel
-                    </button>
-                </form>
+                            Cancel
+                        </button>
+                    </EditForm>
+                </div>
             </div>
         </div>
-    </div>
+    }
+
 }
 
 @code {
     [Parameter]
     public string Id { get; set; }
 
+    Activity Activity;
+
     bool loadingPage;
     bool loadingButton;
-    Activity Activity = new Activity();
 
     protected override async Task OnInitializedAsync()
     {
         if (ActivityState.Value.SelectedActivity != null)
+        {
             Activity = ActivityState.Value.SelectedActivity;
+            Activity.Time = Convert.ToDateTime(Activity.Date.ToString("hh:mm"));
+        }
         else if (Id != null)
         {
             loadingPage = true;
+
             Activity = await Agent.GetActivity(Id);
+            Activity.Time = Convert.ToDateTime(Activity.Date.ToString("hh:mm"));
+
             loadingPage = false;
         }
     }
@@ -117,6 +149,8 @@ else
         bool isNew;
         HttpResponseMessage response;
         var activities = ActivityState.Value.Activities;
+
+        Activity.Date = Util.CombineDateAndTime(Activity.Date, Activity.Time);
 
         if (NavManager.ToBaseRelativePath(NavManager.Uri).StartsWith("create"))
         {
