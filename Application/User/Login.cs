@@ -1,4 +1,5 @@
 ﻿using Application.Errors;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -30,12 +31,15 @@ namespace Application.User
         {
             private readonly UserManager<AppUser> _userManager;
             private readonly SignInManager<AppUser> _signInManager;
+            private readonly IJwtGenerator _jwtGenerator;
 
             public Handler(UserManager<AppUser> userManager,
-                           SignInManager<AppUser> signInManager)
+                           SignInManager<AppUser> signInManager,
+                           IJwtGenerator jwtGenerator)
             {
                 _userManager = userManager;
                 _signInManager = signInManager;
+                _jwtGenerator = jwtGenerator;
             }
 
             public async Task<User> Handle(Query request,
@@ -48,11 +52,10 @@ namespace Application.User
                 var result = _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
                 if (result.IsCompletedSuccessfully)
                 {
-                    // TODO: generate token
                     return new User
                     {
                         DisplayName = user.DisplayName,
-                        Token = "token",
+                        Token = _jwtGenerator.CreateToken(user),
                         Username = user.UserName,
                         Image = null
                     };
