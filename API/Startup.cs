@@ -78,6 +78,7 @@ namespace API
                     });
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
