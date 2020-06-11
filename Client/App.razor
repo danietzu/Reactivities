@@ -1,15 +1,17 @@
 @inject IStore Store
 
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <NotFound />
-        </LayoutView>
-    </NotFound>
-</Router>
+<StorageHelper>
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <NotFound />
+            </LayoutView>
+        </NotFound>
+    </Router>
+</StorageHelper>
 
 @code {
     protected override async Task OnInitializedAsync()

@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using Client.Data;
+using Client.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Net;
@@ -30,6 +30,54 @@ namespace Client.Api
             _navigationManager = navigationManager;
             _toastService = toastService;
             //_client.DefaultRequestHeaders ...
+        }
+
+        public async Task<HttpResponseMessage> GetCurrentUser()
+        {
+            var response = await Get("/user");
+            var stringContent = await response.Content.ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // save user in STORE
+            }
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> Login(LoginUserForm userFormValues)
+        {
+            var json = JsonSerializer.Serialize(userFormValues);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await Post("/user/login", content);
+
+            var stringContent = await response.Content.ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // save user in STORE
+            }
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> Register(RegisterUserForm userFormValues)
+        {
+            var json = JsonSerializer.Serialize(userFormValues);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await Post("/user/register", content);
+
+            var stringContent = await response.Content.ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // save user in STORE and LOGIN
+            }
+
+            return response;
         }
 
         public async Task<List<Activity>> ListActivities()

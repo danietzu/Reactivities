@@ -1,4 +1,4 @@
-﻿using Client.Data;
+﻿using Client.Models;
 using System.Collections.Generic;
 
 namespace Client.Store.Activities

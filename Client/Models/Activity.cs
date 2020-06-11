@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Client.Data
+namespace Client.Models
 {
     public class Activity
     {

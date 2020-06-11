@@ -1,6 +1,10 @@
 ﻿@page "/"
 @layout HomeLayout
 
+@inject Agent agent
+@inject UserViewModel Svc
+@inject IJSRuntime js
+
 <div class="ui segment inverted masthead">
     <div class="ui container"
          style="text-align: center;">
@@ -18,6 +22,8 @@
                 </button>
             </NavLink>
         </header>
+        <button @onclick="GenerateUser">Generate user</button>
+        <p>@Svc.User?.DisplayName</p>
     </div>
 </div>
 
@@ -46,5 +52,11 @@
 </style>
 
 @code {
+    Random rand = new Random();
 
+    void GenerateUser()
+    {
+        var randomN = rand.Next(1, 50).ToString();
+        Svc.User = new User { DisplayName = "Jimmy " + randomN };
+    }
 }

@@ -1,4 +1,4 @@
-﻿using Client.Data;
+﻿using Client.Models;
 
 namespace Client.Store.Activities
 {

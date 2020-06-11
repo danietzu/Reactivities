@@ -41,7 +41,8 @@ namespace API
                 {
                     policy.AllowAnyHeader()
                           .AllowAnyMethod()
-                          .WithOrigins("https://localhost:5001");
+                          .WithOrigins("http://localhost:5000",
+                                       "https://localhost:5001");
                 });
             });
 

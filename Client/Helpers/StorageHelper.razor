@@ -1,0 +1,65 @@
+﻿@using Client.Store;
+@using Microsoft.JSInterop;
+@using System.Text.Json;
+@inject IJSRuntime JsRuntime
+@inject UserViewModel Model
+
+@if (hasLoaded)
+{
+    @ChildContent
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private bool hasLoaded;
+    private bool isDeserializing;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string vm;
+        try
+        {
+            vm = await JsRuntime.InvokeAsync<string>("stateManager.load", nameof(UserViewModel));
+        }
+        // we are pre-rendering. No worries; we'll be called again when the client
+        // is ready
+        catch (InvalidOperationException)
+        {
+            return;
+        }
+        if (!string.IsNullOrEmpty(vm))
+        {
+            try
+            {
+                var viewModel = JsonSerializer.Deserialize<UserViewModel>(vm);
+                if (viewModel != null)
+                {
+                    isDeserializing = true;
+                    Model.User = viewModel.User;
+                    isDeserializing = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        Model.PropertyChanged += async (o, e) =>
+        {
+            if (isDeserializing)
+            {
+                return;
+            }
+            var vmStr = JsonSerializer.Serialize(((UserViewModel)Model));
+            await JsRuntime.InvokeAsync<object>(
+                "stateManager.save", nameof(UserViewModel), vmStr);
+        };
+        hasLoaded = true;
+    }
+}
