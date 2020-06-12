@@ -1,7 +1,6 @@
 using Blazored.Toast;
 using Client.Api;
-using Client.Store;
-using Fluxor;
+using Client.Storage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -22,12 +21,8 @@ namespace Client
                 BaseAddress = new Uri("https://localhost:4001")
             });
             builder.Services.AddScoped<Agent>();
-            builder.Services.AddSingleton<UserViewModel>();
+            builder.Services.AddSingleton<StorageService>();
             builder.Services.AddBlazoredToast();
-            builder.Services.AddFluxor(options =>
-            {
-                options.ScanAssemblies(typeof(Program).Assembly);
-            });
 
             await builder.Build().RunAsync();
         }

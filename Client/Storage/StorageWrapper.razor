@@ -1,8 +1,7 @@
-﻿@using Client.Store;
-@using Microsoft.JSInterop;
+﻿@using Microsoft.JSInterop;
 @using System.Text.Json;
 @inject IJSRuntime JsRuntime
-@inject UserViewModel Model
+@inject StorageService Storage
 
 @if (hasLoaded)
 {
@@ -23,25 +22,19 @@ else
     protected override async Task OnInitializedAsync()
     {
         string vm;
-        try
-        {
-            vm = await JsRuntime.InvokeAsync<string>("stateManager.load", nameof(UserViewModel));
-        }
-        // we are pre-rendering. No worries; we'll be called again when the client
-        // is ready
-        catch (InvalidOperationException)
-        {
-            return;
-        }
+        vm = await JsRuntime.InvokeAsync<string>("state.load", nameof(Storage));
+
         if (!string.IsNullOrEmpty(vm))
         {
             try
             {
-                var viewModel = JsonSerializer.Deserialize<UserViewModel>(vm);
+                var viewModel = JsonSerializer.Deserialize<StorageService>(vm);
                 if (viewModel != null)
                 {
                     isDeserializing = true;
-                    Model.User = viewModel.User;
+                    Storage.CurrentUser = viewModel.CurrentUser;
+                    Storage.Activities = viewModel.Activities;
+                    Storage.SelectedActivity = viewModel.SelectedActivity;
                     isDeserializing = false;
                 }
             }
@@ -50,16 +43,18 @@ else
                 Console.WriteLine(ex);
             }
         }
-        Model.PropertyChanged += async (o, e) =>
+
+        Storage.PropertyChanged += async (o, e) =>
         {
             if (isDeserializing)
             {
                 return;
             }
-            var vmStr = JsonSerializer.Serialize(((UserViewModel)Model));
+            var vmStr = JsonSerializer.Serialize(((StorageService)Storage));
             await JsRuntime.InvokeAsync<object>(
-                "stateManager.save", nameof(UserViewModel), vmStr);
+                "state.save", nameof(Storage), vmStr);
         };
+
         hasLoaded = true;
     }
 }

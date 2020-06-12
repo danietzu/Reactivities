@@ -1,4 +1,4 @@
-﻿window.stateManager = {
+﻿window.state = {
     save: function (key, str) {
         localStorage[key] = str;
     },

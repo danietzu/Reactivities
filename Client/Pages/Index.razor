@@ -2,7 +2,7 @@
 @layout HomeLayout
 
 @inject Agent agent
-@inject UserViewModel Svc
+@inject StorageService Storage
 @inject IJSRuntime js
 
 <div class="ui segment inverted masthead">
@@ -17,13 +17,21 @@
         <header class="inverted">
             <h2>Welcome to Reactivities</h2>
             <NavLink href="activities">
-                <button class="ui button huge inverted">
-                    Take me to the activities!
-                </button>
+                <a class="ui button huge inverted"
+                   href="login">
+                    Login
+                </a>
             </NavLink>
         </header>
-        <button @onclick="GenerateUser">Generate user</button>
-        <p>@Svc.User?.DisplayName</p>
+        <button @onclick="SimulateFetch">Simulate Fetch</button>
+        <p>@Storage.CurrentUser?.DisplayName</p>
+        <ul>
+            @if (Storage.Activities != null)
+                @foreach (var activity in Storage.Activities)
+                {
+                    <li>@activity.Title</li>
+                }
+        </ul>
     </div>
 </div>
 
@@ -54,9 +62,14 @@
 @code {
     Random rand = new Random();
 
-    void GenerateUser()
+    async Task SimulateFetch()
     {
-        var randomN = rand.Next(1, 50).ToString();
-        Svc.User = new User { DisplayName = "Jimmy " + randomN };
+        if (Storage.CurrentUser == null)
+            await agent.Login(new LoginUserForm { Email = "danietzu@test.com", Password = "Pa$$w0rd" });
+
+        if (Storage.Activities == null)
+            await agent.GetActivities();
+
+        Storage.SelectedActivity = Storage.Activities.FirstOrDefault();
     }
 }

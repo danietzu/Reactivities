@@ -1,10 +1,6 @@
 ﻿@page "/activities/{Id}"
 
-@inherits FluxorComponent
-
-@inject IState<ActivityState> ActivityState
 @inject NavigationManager NavManager
-@inject IDispatcher Dispatcher
 @inject Agent Agent
 
 @if (loading)

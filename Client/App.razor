@@ -1,6 +1,4 @@
-@inject IStore Store
-
-<StorageHelper>
+<StorageWrapper>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -11,11 +9,7 @@
             </LayoutView>
         </NotFound>
     </Router>
-</StorageHelper>
+</StorageWrapper>
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        await Store.InitializeAsync();
-    }
 }

@@ -1,6 +1,4 @@
 ﻿@inject Agent Agent
-@inject IState<ActivityState> ActivityState
-@inject IDispatcher Dispatcher
 @inject NavigationManager NavManager
 
 <div class="ui segments">
@@ -28,25 +26,25 @@
     </div>
     <div class="ui segment clearing">
         <span>@Activity.Description</span>
-        <button class="ui button blue right floated"
-                @onclick="() => SelectActivity(Activity)">
-            View
-        </button>
+        @*<button class="ui button blue right floated"
+                    @onclick="() => SelectActivity(Activity)">
+                View
+            </button>*@
     </div>
 </div>
 
 @code {
     [Parameter]
-    public Activity Activity { get; set; }
+    public Activity Activity { get; set; } = new Activity();
 
-    void SelectActivity(Activity selectedActivity)
-    {
-        Dispatcher.Dispatch(new SelectActivityAction
+    @*void SelectActivity(Activity selectedActivity)
         {
-            SelectedActivity = selectedActivity
-        });
-        NavManager.NavigateTo($"/activities/{selectedActivity.Id}");
-    }
+            Dispatcher.Dispatch(new SelectActivityAction
+            {
+                SelectedActivity = selectedActivity
+            });
+            NavManager.NavigateTo($"/activities/{selectedActivity.Id}");
+        }*@
 
     //async Task DeleteActivity(Activity selectedActivity)
     //{

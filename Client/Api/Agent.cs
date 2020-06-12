@@ -1,5 +1,6 @@
 ﻿using Blazored.Toast.Services;
 using Client.Models;
+using Client.Storage;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Net;
@@ -14,6 +15,7 @@ namespace Client.Api
     {
         private readonly string _baseUrl = "https://localhost:4001/api";
         private readonly HttpClient _client;
+        private readonly StorageService _storage;
         private readonly NavigationManager _navigationManager;
         private readonly IToastService _toastService;
 
@@ -23,28 +25,30 @@ namespace Client.Api
         };
 
         public Agent(HttpClient client,
+                     StorageService storage,
                      NavigationManager navigationManager,
                      IToastService toastService)
         {
             _client = client;
+            _storage = storage;
             _navigationManager = navigationManager;
             _toastService = toastService;
             //_client.DefaultRequestHeaders ...
         }
 
-        public async Task<HttpResponseMessage> GetCurrentUser()
-        {
-            var response = await Get("/user");
-            var stringContent = await response.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
+        //public async Task<HttpResponseMessage> GetCurrentUser()
+        //{
+        //    var response = await Get("/user");
+        //    var stringContent = await response.Content.ReadAsStringAsync();
+        //    var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
 
-            if (response.IsSuccessStatusCode)
-            {
-                // save user in STORE
-            }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        // save user in STORE
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public async Task<HttpResponseMessage> Login(LoginUserForm userFormValues)
         {
@@ -57,7 +61,7 @@ namespace Client.Api
 
             if (response.IsSuccessStatusCode)
             {
-                // save user in STORE
+                _storage.CurrentUser = user;
             }
 
             return response;
@@ -74,18 +78,24 @@ namespace Client.Api
 
             if (response.IsSuccessStatusCode)
             {
-                // save user in STORE and LOGIN
+                _storage.CurrentUser = user;
             }
 
             return response;
         }
 
-        public async Task<List<Activity>> ListActivities()
+        public async Task<HttpResponseMessage> GetActivities()
         {
             var response = await Get("/activities");
             var content = await response.Content.ReadAsStringAsync();
+            var activities = JsonSerializer.Deserialize<List<Activity>>(content, _jsonSerializerOptions);
 
-            return JsonSerializer.Deserialize<List<Activity>>(content, _jsonSerializerOptions);
+            if (response.IsSuccessStatusCode)
+            {
+                _storage.Activities = activities;
+            }
+
+            return response;
         }
 
         public async Task<Activity> GetActivity(string id)

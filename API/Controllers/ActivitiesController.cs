@@ -13,6 +13,7 @@ namespace API.Controllers
     public class ActivitiesController : BaseController
     {
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Activity>>> List()
         {
             Thread.Sleep(500);

@@ -1,0 +1,25 @@
+﻿@page "/login"
+
+@inject IJSRuntime js
+
+<EditForm class="ui form"
+          Model="loginForm"
+          OnSubmit="HandleSubmit">
+    <InputText class="ui field"
+               placeholder="Email"
+               @bind-Value="loginForm.Email" />
+    <InputText class="ui field"
+               type="password"
+               placeholder="Password"
+               @bind-Value="loginForm.Password" />
+    <button class="ui button positive">Login</button>
+</EditForm>
+
+@code {
+    LoginUserForm loginForm = new LoginUserForm();
+
+    async Task HandleSubmit()
+    {
+        await js.InvokeVoidAsync("log", loginForm);
+    }
+}

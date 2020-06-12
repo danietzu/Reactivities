@@ -1,7 +1,4 @@
-﻿@inherits FluxorComponent
-
-@inject IDispatcher Dispatcher
-@inject NavigationManager NavManager
+﻿@inject NavigationManager NavManager
 
 <div class="ui fixed top inverted menu">
     <div class="ui container">
@@ -30,7 +27,7 @@
 @code {
     void CreateActivity()
     {
-        Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
-        NavManager.NavigateTo("createActivity");
+        @*Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
+            NavManager.NavigateTo("createActivity");*@
     }
 }

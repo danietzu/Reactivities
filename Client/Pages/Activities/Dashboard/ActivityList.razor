@@ -1,8 +1,4 @@
-﻿@inherits FluxorComponent
-
-@inject Agent Agent
-@inject IDispatcher Dispatcher
-@inject IState<ActivityState> ActivityState
+﻿@inject Agent Agent
 @inject NavigationManager NavManager
 
 <div class="ui divided items">
@@ -17,14 +13,14 @@
     }
     else
     {
-        @foreach (var group in ActivityState.Value.ActivitiesByDate)
-        {
-            <label class="ui blue ribbon large label">@group.Date</label>
-            @foreach (var activity in group.Activities)
+        @*@foreach (var group in ActivityState.Value.ActivitiesByDate)
             {
-                <ActivityListItem Activity="activity" />
-            }
-        }
+                <label class="ui blue ribbon large label">@group.Date</label>
+                @foreach (var activity in group.Activities)
+                {
+                    <ActivityListItem Activity="activity" />
+                }
+            }*@
     }
 </div>
 
@@ -35,18 +31,18 @@
     protected override async Task OnInitializedAsync()
     {
 
-        var response = await Agent.ListActivities();
-        if (response != null)
-        {
-            Dispatcher.Dispatch(new SetAllActivitiesAction
+        var response = await Agent.GetActivities();
+        @*if (response != null)
             {
-                Activities = response.OrderByDescending(a => a.Date).ToList()
-            });
-        }
+                Dispatcher.Dispatch(new SetAllActivitiesAction
+                {
+                    Activities = response.OrderByDescending(a => a.Date).ToList()
+                });
+            }*@
         // PROBLEM: we are doing too many requests to the API
         // but for now is necessary because new activities don't have a valid guid until new fetch
 
-        activities = ActivityState.Value.Activities;
-        orderedActivities = ActivityState.Value.ActivitiesByDate;
+        @*activities = ActivityState.Value.Activities;
+            orderedActivities = ActivityState.Value.ActivitiesByDate;*@
     }
 }
