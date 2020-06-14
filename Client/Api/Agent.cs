@@ -14,6 +14,8 @@ namespace Client.Api
     public class Agent
     {
         private readonly string _baseUrl = "https://localhost:4001/api";
+        //private readonly string _baseUrl = "https://192.168.178.137:45455/api";
+
         private readonly HttpClient _client;
         private readonly StorageService _storage;
         private readonly NavigationManager _navigationManager;
@@ -56,11 +58,10 @@ namespace Client.Api
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await Post("/user/login", content);
 
-            var stringContent = await response.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
-
             if (response.IsSuccessStatusCode)
             {
+                var stringContent = await response.Content.ReadAsStringAsync();
+                var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
                 _storage.CurrentUser = user;
             }
 

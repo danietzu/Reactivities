@@ -1,4 +1,6 @@
 ﻿@inject NavigationManager NavManager
+@inject StorageService Storage
+@inject IJSRuntime js
 
 <div class="ui fixed top inverted menu">
     <div class="ui container">
@@ -21,6 +23,27 @@
                 Create Activity
             </button>
         </div>
+        @if (Storage.CurrentUser != null)
+        {
+            <div class="ui simple dropdown right item">
+                <div class="text">
+                    <img class="ui avatar image" src="assets/user.png">
+                    @Storage.CurrentUser.DisplayName
+                </div>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item">
+                        <i class="ui icon user"></i>
+                        My Profile
+                    </div>
+                    <div class="item"
+                         @onclick="Logout">
+                        <i class="ui icon power"></i>
+                        Logout
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -29,5 +52,11 @@
     {
         @*Dispatcher.Dispatch(new SelectActivityAction { SelectedActivity = null });
             NavManager.NavigateTo("createActivity");*@
+    }
+
+    async Task Logout()
+    {
+        await js.InvokeVoidAsync("state.remove", "Storage");
+        NavManager.NavigateTo("/", true);
     }
 }

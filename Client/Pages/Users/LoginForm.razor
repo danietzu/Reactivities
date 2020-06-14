@@ -1,18 +1,23 @@
 ﻿@page "/login"
 
 @inject IJSRuntime js
+@inject Agent agent
+@inject NavigationManager NavManager
 
 <EditForm class="ui form"
           Model="loginForm"
-          OnSubmit="HandleSubmit">
+          OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
     <InputText class="ui field"
                placeholder="Email"
                @bind-Value="loginForm.Email" />
+    <ValidationMessage For="@(() => loginForm.Email)" />
     <InputText class="ui field"
                type="password"
                placeholder="Password"
                @bind-Value="loginForm.Password" />
-    <button class="ui button positive">Login</button>
+    <ValidationMessage For="@(() => loginForm.Password)" />
+    <button class="ui button positive">Login!</button>
 </EditForm>
 
 @code {
@@ -20,6 +25,8 @@
 
     async Task HandleSubmit()
     {
-        await js.InvokeVoidAsync("log", loginForm);
+        var response = await agent.Login(loginForm);
+        if (response.IsSuccessStatusCode)
+            NavManager.NavigateTo("activities", true);
     }
 }

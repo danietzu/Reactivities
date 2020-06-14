@@ -15,23 +15,24 @@
             <h1>Reactivities</h1>
         </header>
         <header class="inverted">
-            <h2>Welcome to Reactivities</h2>
-            <NavLink href="activities">
-                <a class="ui button huge inverted"
-                   href="login">
-                    Login
-                </a>
-            </NavLink>
+            <h2>Reactivities</h2>
+            @if (Storage.CurrentUser == null)
+            {
+                <NavLink href="login">
+                    <a class="ui button huge inverted">
+                        Login
+                    </a>
+                </NavLink>
+            }
+            else
+            {
+                <NavLink href="activities">
+                    <a class="ui button huge inverted">
+                        Welcome @Storage.CurrentUser.DisplayName!
+                    </a>
+                </NavLink>
+            }
         </header>
-        <button @onclick="SimulateFetch">Simulate Fetch</button>
-        <p>@Storage.CurrentUser?.DisplayName</p>
-        <ul>
-            @if (Storage.Activities != null)
-                @foreach (var activity in Storage.Activities)
-                {
-                    <li>@activity.Title</li>
-                }
-        </ul>
     </div>
 </div>
 
@@ -60,16 +61,5 @@
 </style>
 
 @code {
-    Random rand = new Random();
 
-    async Task SimulateFetch()
-    {
-        if (Storage.CurrentUser == null)
-            await agent.Login(new LoginUserForm { Email = "danietzu@test.com", Password = "Pa$$w0rd" });
-
-        if (Storage.Activities == null)
-            await agent.GetActivities();
-
-        Storage.SelectedActivity = Storage.Activities.FirstOrDefault();
-    }
 }
