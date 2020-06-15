@@ -2,7 +2,7 @@
 @layout HomeLayout
 
 @inject Agent agent
-@inject StorageService Storage
+@inject RootStore Store
 @inject IJSRuntime js
 
 <div class="ui segment inverted masthead">
@@ -15,20 +15,20 @@
             <h1>Reactivities</h1>
         </header>
         <header class="inverted">
-            <h2>Reactivities</h2>
-            @if (Storage.CurrentUser == null)
+            <h2>Welcome @(Store.CurrentUser?.DisplayName ?? "")</h2>
+            @if (Store.CurrentUser == null)
             {
-                <NavLink href="login">
-                    <a class="ui button huge inverted">
-                        Login
-                    </a>
-                </NavLink>
+                <button class="ui button huge inverted"
+                        @onclick="@(async () => await js.InvokeVoidAsync("showModal"))">
+                    Login
+                </button>
+                <Modal><LoginForm /></Modal>
             }
             else
             {
                 <NavLink href="activities">
                     <a class="ui button huge inverted">
-                        Welcome @Storage.CurrentUser.DisplayName!
+                        Go to activities!
                     </a>
                 </NavLink>
             }

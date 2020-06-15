@@ -2,28 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Client.Storage
+namespace Client.Stores
 {
-    public class StorageService
+    public partial class RootStore
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private User _currentUser;
         private List<Activity> _activities;
         private Activity _selectedActivity;
-
-        public User CurrentUser
-        {
-            get => _currentUser;
-            set
-            {
-                if (value != null && value != _currentUser)
-                {
-                    _currentUser = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUser)));
-                }
-            }
-        }
 
         public List<Activity> Activities
         {

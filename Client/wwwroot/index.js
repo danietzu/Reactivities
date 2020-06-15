@@ -13,3 +13,11 @@
 function log(message) {
     console.log(message);
 }
+
+function showModal() {
+    $('.ui.modal').modal('show');
+}
+
+function showDropdown() {
+    $('.ui.dropdown').dropdown();
+}

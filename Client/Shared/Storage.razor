@@ -1,7 +1,5 @@
-﻿@using Microsoft.JSInterop;
-@using System.Text.Json;
-@inject IJSRuntime JsRuntime
-@inject StorageService Storage
+﻿@inject IJSRuntime JsRuntime
+@inject RootStore Store
 
 @if (hasLoaded)
 {
@@ -22,19 +20,19 @@ else
     protected override async Task OnInitializedAsync()
     {
         string vm;
-        vm = await JsRuntime.InvokeAsync<string>("state.load", nameof(Storage));
+        vm = await JsRuntime.InvokeAsync<string>("state.load", nameof(Store));
 
         if (!string.IsNullOrEmpty(vm))
         {
             try
             {
-                var viewModel = JsonSerializer.Deserialize<StorageService>(vm);
+                var viewModel = JsonSerializer.Deserialize<RootStore>(vm);
                 if (viewModel != null)
                 {
                     isDeserializing = true;
-                    Storage.CurrentUser = viewModel.CurrentUser;
-                    Storage.Activities = viewModel.Activities;
-                    Storage.SelectedActivity = viewModel.SelectedActivity;
+                    Store.CurrentUser = viewModel.CurrentUser;
+                    @*Store.Activities = viewModel.Activities;
+                        Store.SelectedActivity = viewModel.SelectedActivity;*@
                     isDeserializing = false;
                 }
             }
@@ -44,15 +42,15 @@ else
             }
         }
 
-        Storage.PropertyChanged += async (o, e) =>
+        Store.PropertyChanged += async (o, e) =>
         {
             if (isDeserializing)
             {
                 return;
             }
-            var vmStr = JsonSerializer.Serialize(((StorageService)Storage));
+            var vmStr = JsonSerializer.Serialize(((RootStore)Store));
             await JsRuntime.InvokeAsync<object>(
-                "state.save", nameof(Storage), vmStr);
+                "state.save", nameof(Store), vmStr);
         };
 
         hasLoaded = true;

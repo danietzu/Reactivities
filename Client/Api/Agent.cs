@@ -1,7 +1,8 @@
 ﻿using Blazored.Toast.Services;
 using Client.Models;
-using Client.Storage;
+using Client.Stores;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -17,8 +18,9 @@ namespace Client.Api
         //private readonly string _baseUrl = "https://192.168.178.137:45455/api";
 
         private readonly HttpClient _client;
-        private readonly StorageService _storage;
+        private readonly RootStore _storage;
         private readonly NavigationManager _navigationManager;
+        private readonly IJSRuntime _js;
         private readonly IToastService _toastService;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
@@ -27,30 +29,17 @@ namespace Client.Api
         };
 
         public Agent(HttpClient client,
-                     StorageService storage,
+                     RootStore storage,
                      NavigationManager navigationManager,
+                     IJSRuntime js,
                      IToastService toastService)
         {
             _client = client;
             _storage = storage;
             _navigationManager = navigationManager;
+            _js = js;
             _toastService = toastService;
-            //_client.DefaultRequestHeaders ...
         }
-
-        //public async Task<HttpResponseMessage> GetCurrentUser()
-        //{
-        //    var response = await Get("/user");
-        //    var stringContent = await response.Content.ReadAsStringAsync();
-        //    var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        // save user in STORE
-        //    }
-
-        //    return response;
-        //}
 
         public async Task<HttpResponseMessage> Login(LoginUserForm userFormValues)
         {
@@ -85,18 +74,21 @@ namespace Client.Api
             return response;
         }
 
-        public async Task<HttpResponseMessage> GetActivities()
+        public async Task<List<Activity>> GetActivities()
         {
+            await Authorize();
+
             var response = await Get("/activities");
             var content = await response.Content.ReadAsStringAsync();
             var activities = JsonSerializer.Deserialize<List<Activity>>(content, _jsonSerializerOptions);
 
             if (response.IsSuccessStatusCode)
             {
-                _storage.Activities = activities;
+                //_storage.Activities = activities;
+                return activities;
             }
-
-            return response;
+            else
+                return null;
         }
 
         public async Task<Activity> GetActivity(string id)
@@ -141,6 +133,16 @@ namespace Client.Api
         public async Task<HttpResponseMessage> DeleteActivity(string id)
         {
             return await Delete($"/activities/{id}");
+        }
+
+        private async Task Authorize()
+        {
+            var storeJson = await _js.InvokeAsync<string>("state.load", "Store");
+            var store = JsonSerializer.Deserialize<RootStore>(storeJson);
+            var user = store.CurrentUser;
+
+            if (!_client.DefaultRequestHeaders.Contains("Authorization"))
+                _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + user.Token);
         }
 
         private async Task<HttpResponseMessage> Get(string url) =>

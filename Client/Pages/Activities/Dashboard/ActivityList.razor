@@ -2,7 +2,7 @@
 @inject NavigationManager NavManager
 
 <div class="ui divided items">
-    @if (activities == null)
+    @if (_activities == null)
     {
         <div class="ui segment">
             <p></p>
@@ -13,36 +13,32 @@
     }
     else
     {
-        @*@foreach (var group in ActivityState.Value.ActivitiesByDate)
+        @foreach (var group in _activities)
+        {
+            <label class="ui blue ribbon large label">@group.Date</label>
+            @foreach (var activity in group.Activities)
             {
-                <label class="ui blue ribbon large label">@group.Date</label>
-                @foreach (var activity in group.Activities)
-                {
-                    <ActivityListItem Activity="activity" />
-                }
-            }*@
+                <ActivityListItem Activity="activity" />
+            }
+        }
     }
 </div>
 
 @code {
-    List<Activity> activities;
-    List<ActivityGroupByDate> orderedActivities;
+    List<ActivityGroupByDate> _activities;
 
     protected override async Task OnInitializedAsync()
     {
-
-        var response = await Agent.GetActivities();
-        @*if (response != null)
-            {
-                Dispatcher.Dispatch(new SetAllActivitiesAction
-                {
-                    Activities = response.OrderByDescending(a => a.Date).ToList()
-                });
-            }*@
-        // PROBLEM: we are doing too many requests to the API
-        // but for now is necessary because new activities don't have a valid guid until new fetch
-
-        @*activities = ActivityState.Value.Activities;
-            orderedActivities = ActivityState.Value.ActivitiesByDate;*@
+        var activities = await Agent.GetActivities();
+        if (activities != null)
+        {
+            _activities = activities.GroupBy(a => String.Format("{0:MM/dd/yy}", a.Date))
+                                    .Select(x => new ActivityGroupByDate
+                                    {
+                                        Date = x.Key,
+                                        Activities = x.ToList()
+                                    })
+                                    .ToList();
+        }
     }
 }

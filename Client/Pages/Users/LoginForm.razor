@@ -1,6 +1,4 @@
-﻿@page "/login"
-
-@inject IJSRuntime js
+﻿@inject IJSRuntime js
 @inject Agent agent
 @inject NavigationManager NavManager
 
@@ -17,7 +15,10 @@
                placeholder="Password"
                @bind-Value="loginForm.Password" />
     <ValidationMessage For="@(() => loginForm.Password)" />
-    <button class="ui button positive">Login!</button>
+    <button type="submit"
+            class="ui positive button">
+        Login
+    </button>
 </EditForm>
 
 @code {

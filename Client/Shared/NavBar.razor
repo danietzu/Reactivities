@@ -1,5 +1,5 @@
 ﻿@inject NavigationManager NavManager
-@inject StorageService Storage
+@inject RootStore Store
 @inject IJSRuntime js
 
 <div class="ui fixed top inverted menu">
@@ -23,12 +23,12 @@
                 Create Activity
             </button>
         </div>
-        @if (Storage.CurrentUser != null)
+        @if (Store.CurrentUser != null)
         {
             <div class="ui simple dropdown right item">
                 <div class="text">
                     <img class="ui avatar image" src="assets/user.png">
-                    @Storage.CurrentUser.DisplayName
+                    @Store.CurrentUser.DisplayName
                 </div>
                 <i class="dropdown icon"></i>
                 <div class="menu">
@@ -56,7 +56,7 @@
 
     async Task Logout()
     {
-        await js.InvokeVoidAsync("state.remove", "Storage");
+        await js.InvokeVoidAsync("state.remove", "Store");
         NavManager.NavigateTo("/", true);
     }
 }
