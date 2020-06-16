@@ -63,11 +63,10 @@ namespace Client.Api
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await Post("/user/register", content);
 
-            var stringContent = await response.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
-
             if (response.IsSuccessStatusCode)
             {
+                var stringContent = await response.Content.ReadAsStringAsync();
+                var user = JsonSerializer.Deserialize<User>(stringContent, _jsonSerializerOptions);
                 _storage.CurrentUser = user;
             }
 

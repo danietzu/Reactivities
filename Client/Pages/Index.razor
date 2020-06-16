@@ -19,10 +19,15 @@
             @if (Store.CurrentUser == null)
             {
                 <button class="ui button huge inverted"
-                        @onclick="@(async () => await js.InvokeVoidAsync("showModal"))">
+                        @onclick="@(async () => await js.InvokeVoidAsync("showModal", "login-modal"))">
                     Login
                 </button>
-                <Modal><LoginForm /></Modal>
+                <Modal Id="login-modal"><LoginForm /></Modal>
+                <button class="ui button huge inverted"
+                        @onclick="@(async () => await js.InvokeVoidAsync("showModal", "register-modal"))">
+                    Register
+                </button>
+                <Modal Id="register-modal"><RegisterForm /></Modal>
             }
             else
             {
@@ -59,7 +64,3 @@
             font-weight: normal;
         }
 </style>
-
-@code {
-
-}

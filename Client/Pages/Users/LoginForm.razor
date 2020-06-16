@@ -6,6 +6,7 @@
           Model="loginForm"
           OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
+    <header class="ui header center text teal">Login to Reactivities</header>
     <InputText class="ui field"
                placeholder="Email"
                @bind-Value="loginForm.Email" />
@@ -15,19 +16,31 @@
                placeholder="Password"
                @bind-Value="loginForm.Password" />
     <ValidationMessage For="@(() => loginForm.Password)" />
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="ui negative message">
+            <i class="close icon"></i>
+            <div class="header">
+                @error
+            </div>
+        </div>
+    }
     <button type="submit"
-            class="ui positive button">
+            class="ui button fluid teal">
         Login
     </button>
 </EditForm>
 
 @code {
     LoginUserForm loginForm = new LoginUserForm();
+    string error;
 
     async Task HandleSubmit()
     {
         var response = await agent.Login(loginForm);
         if (response.IsSuccessStatusCode)
             NavManager.NavigateTo("activities", true);
+        else
+            error = response.ReasonPhrase;
     }
 }

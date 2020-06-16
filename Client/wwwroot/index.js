@@ -14,8 +14,8 @@ function log(message) {
     console.log(message);
 }
 
-function showModal() {
-    $('.ui.modal').modal('show');
+function showModal(id) {
+    $('#' + id).modal('show');
 }
 
 function showDropdown() {

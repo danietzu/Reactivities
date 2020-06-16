@@ -49,8 +49,8 @@ namespace Application.User
                 if (user == null)
                     throw new RestException(HttpStatusCode.Unauthorized);
 
-                var result = _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-                if (result.IsCompletedSuccessfully)
+                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+                if (result.Succeeded)
                 {
                     return new User
                     {

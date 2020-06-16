@@ -1,6 +1,7 @@
 ﻿@inject RootStore Store
 
-<div class="ui modal">
+<div class="ui mini modal"
+     id="@Id">
     <div class="content">
         @ChildContent
     </div>
@@ -12,6 +13,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public string Id { get; set; }
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 }

@@ -1,0 +1,70 @@
+﻿@inject IJSRuntime js
+@inject Agent agent
+@inject NavigationManager NavManager
+
+<EditForm class="ui form"
+          Model="registerForm"
+          OnSubmit="HandleSubmit">
+    <header class="ui header center text teal">Register to Reactivities</header>
+    <InputText class="ui field"
+               placeholder="First name"
+               @bind-Value="registerForm.Username" />
+    <InputText class="ui field"
+               placeholder="Display name"
+               @bind-Value="registerForm.DisplayName" />
+    <InputText class="ui field"
+               placeholder="Email"
+               @bind-Value="registerForm.Email" />
+    <InputText class="ui field"
+               type="password"
+               placeholder="Password"
+               @bind-Value="registerForm.Password" />
+    @if (_errors != null)
+    {
+        <div class="ui negative message">
+            <i class="close icon"></i>
+            <div class="header">
+                Please solve the following problems:
+            </div>
+            <ul>
+                @foreach (var error in _errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        </div>
+    }
+    <button type="submit"
+            class="ui button fluid teal">
+        Register
+    </button>
+</EditForm>
+
+@code {
+    RegisterUserForm registerForm = new RegisterUserForm();
+    List<string> _errors;
+
+    async Task HandleSubmit()
+    {
+        var response = await agent.Register(registerForm);
+        if (response.IsSuccessStatusCode)
+            NavManager.NavigateTo("activities", true);
+        else
+        {
+            _errors = new List<string>();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var responseError = JsonSerializer.Deserialize<HttpResponseError>(content, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            });
+
+            foreach (var property in Util.PropertiesOfType<string[]>(responseError.Errors))
+            {
+                if (property.Value != null)
+                    _errors.Add(property.Value[0]);
+            }
+        }
+    }
+}
